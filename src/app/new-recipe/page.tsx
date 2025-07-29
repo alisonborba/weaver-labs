@@ -12,35 +12,19 @@ import {
 } from '@/components/ui/select';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { queryClient } from '@/app/Providers';
+import { useCreateRecipe, useGetRecipes } from '@/hooks/use-mutations';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
-import { AppData, Ingredient } from '@/types';
-
-const recipeFormSchema = z.object({
-  name: z.string().min(1, 'Recipe name is required'),
-  ingredients: z.array(
-    z.object({
-      ingredientId: z.string().min(1, 'Ingredient is required'),
-      quantity: z.number().min(0.1, 'Quantity must be greater than 0'),
-    })
-  ),
-});
-
-type RecipeFormData = z.infer<typeof recipeFormSchema>;
+import { Skeleton } from '@/components/ui/skeleton';
+import { RecipeFormData, recipeFormSchema } from '@/types';
 
 export default function NewRecipe() {
   const router = useRouter();
   const [selectedIngredientId, setSelectedIngredientId] = useState('');
   const [selectedQuantity, setSelectedQuantity] = useState('');
 
-  const { data } = useQuery<AppData>({
-    queryKey: ['recipes'],
-    queryFn: () => fetch('/api/data').then(res => res.json()),
-  });
+  const { data } = useGetRecipes();
 
   const form = useForm<RecipeFormData>({
     resolver: zodResolver(recipeFormSchema),
@@ -55,64 +39,14 @@ export default function NewRecipe() {
     name: 'ingredients',
   });
 
-  const mutation = useMutation({
-    mutationFn: async (recipeData: RecipeFormData) => {
-      const recipeId = `rec${Date.now()}`;
-      const recipeToSend = {
-        id: recipeId,
-        ...recipeData,
-      };
-
-      const response = await fetch('/api/data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(recipeToSend),
-      });
-
-      return response.json();
-    },
-    onMutate: async newRecipe => {
-      // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['recipes'] });
-
-      // Snapshot the previous value
-      const previousData = queryClient.getQueryData<AppData>(['recipes']);
-
-      // Optimistically update to the new value
-      queryClient.setQueryData<AppData>(['recipes'], old => {
-        if (!old) return old;
-        const recipeId = `rec${Date.now()}`;
-        return {
-          ...old,
-          recipes: [
-            ...old.recipes,
-            {
-              id: recipeId,
-              ...newRecipe,
-            },
-          ],
-        };
-      });
-
-      return { previousData };
-    },
-    onError: (err, newRecipe, context) => {
-      // If the mutation fails, use the context returned from onMutate to roll back
-      if (context?.previousData) {
-        queryClient.setQueryData(['recipes'], context.previousData);
-      }
-    },
-    onSuccess: () => {
-      // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: ['recipes'] });
-      router.push('/recipes');
-    },
-  });
+  const createRecipeMutation = useCreateRecipe();
 
   const onSubmit = (data: RecipeFormData) => {
-    mutation.mutate(data);
+    createRecipeMutation.mutate(data, {
+      onSuccess: () => {
+        router.push('/recipes');
+      },
+    });
   };
 
   const addIngredient = () => {
@@ -132,23 +66,19 @@ export default function NewRecipe() {
   // Get available ingredients (not already selected)
   const availableIngredients =
     data?.ingredients.filter(
-      (ingredient: Ingredient) =>
+      ingredient =>
         !form
           .watch('ingredients')
           .some(field => field.ingredientId === ingredient.id)
     ) || [];
 
   const getIngredientUnit = (ingredientId: string) => {
-    const ingredient = data?.ingredients.find(
-      (ing: Ingredient) => ing.id === ingredientId
-    );
+    const ingredient = data?.ingredients.find(ing => ing.id === ingredientId);
     return ingredient?.unit || '';
   };
 
   const getIngredientName = (ingredientId: string) => {
-    const ingredient = data?.ingredients.find(
-      (ing: Ingredient) => ing.id === ingredientId
-    );
+    const ingredient = data?.ingredients.find(ing => ing.id === ingredientId);
     return ingredient?.name || '';
   };
 
@@ -159,10 +89,10 @@ export default function NewRecipe() {
         rightContent={
           <Button
             type="submit"
-            disabled={mutation.isPending}
+            disabled={createRecipeMutation.isPending}
             form="recipe-form"
           >
-            {mutation.isPending ? 'Saving...' : 'Save Recipe'}
+            {createRecipeMutation.isPending ? 'Saving...' : 'Save Recipe'}
           </Button>
         }
       />
@@ -194,28 +124,32 @@ export default function NewRecipe() {
                   <Label htmlFor="ingredient-select" className="ml-1">
                     Select Ingredient
                   </Label>
-                  <Select
-                    value={selectedIngredientId}
-                    onValueChange={setSelectedIngredientId}
-                    disabled={availableIngredients.length === 0}
-                  >
-                    <SelectTrigger className="mt-1 w-full">
-                      <SelectValue
-                        placeholder={
-                          availableIngredients.length === 0
-                            ? 'No more ingredients available'
-                            : 'Choose an ingredient'
-                        }
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableIngredients.map((ingredient: Ingredient) => (
-                        <SelectItem key={ingredient.id} value={ingredient.id}>
-                          {ingredient.name} ({ingredient.unit})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {data ? (
+                    <Select
+                      value={selectedIngredientId}
+                      onValueChange={setSelectedIngredientId}
+                      disabled={availableIngredients.length === 0}
+                    >
+                      <SelectTrigger className="mt-1 w-full">
+                        <SelectValue
+                          placeholder={
+                            availableIngredients.length === 0
+                              ? 'No more ingredients available'
+                              : 'Choose an ingredient'
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableIngredients.map(ingredient => (
+                          <SelectItem key={ingredient.id} value={ingredient.id}>
+                            {ingredient.name} ({ingredient.unit})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Skeleton className="h-10 w-full mt-1" />
+                  )}
                 </div>
 
                 <div className="w-full">
@@ -230,6 +164,7 @@ export default function NewRecipe() {
                   <Input
                     id="quantity"
                     type="number"
+                    min="0.1"
                     step="0.1"
                     value={selectedQuantity}
                     onChange={e => setSelectedQuantity(e.target.value)}
