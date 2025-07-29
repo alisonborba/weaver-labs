@@ -107,7 +107,7 @@ export default function NewRecipe() {
     onSuccess: () => {
       // Always refetch after error or success
       queryClient.invalidateQueries({ queryKey: ['recipes'] });
-      router.push('/');
+      router.push('/recipes');
     },
   });
 
