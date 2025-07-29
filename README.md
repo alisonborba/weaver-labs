@@ -1,3 +1,5 @@
+How you found it, what lead you to make the decisions you did, whether and how you used AI.
+
 IMPROVEMENTS:
 
 - add skeletons loading
