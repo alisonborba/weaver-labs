@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import {
   Table,
   TableBody,
@@ -10,28 +11,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Ingredient, IngredientWithRecipe, Recipe } from '@/types';
+import { Recipe } from '@/types';
 import { useDeleteRecipe, useGetRecipes } from '@/hooks/use-mutations';
 import { Header } from '@/components/Header';
-import Link from 'next/link';
+import { ingredientList } from '@/lib/utils';
 import { TableRowSkeleton } from '@/components/TableRowSkeleton';
 
 export default function RecipeTable() {
   const { data, isLoading } = useGetRecipes();
-
-  const ingredientList = (ingredients: IngredientWithRecipe[]) => {
-    return ingredients.map(ingredient => {
-      const ingredientData: Ingredient | undefined = data?.ingredients.find(
-        (ing: Ingredient) => ing.id === ingredient.ingredientId
-      );
-      if (!ingredientData) return null;
-      return (
-        <div key={ingredient.ingredientId}>
-          {ingredientData.name} - {ingredient.quantity} {ingredientData.unit}
-        </div>
-      );
-    });
-  };
 
   const deleteRecipeMutation = useDeleteRecipe();
 
@@ -59,7 +46,9 @@ export default function RecipeTable() {
             {data?.recipes.map((recipe: Recipe) => (
               <TableRow key={recipe.id}>
                 <TableCell>{recipe.name}</TableCell>
-                <TableCell>{ingredientList(recipe.ingredients)}</TableCell>
+                <TableCell>
+                  {ingredientList(recipe.ingredients, data)}
+                </TableCell>
                 <TableCell className="text-right">
                   <Button
                     variant="outline"

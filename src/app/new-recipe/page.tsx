@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RecipeFormData, recipeFormSchema } from '@/types';
+import { getIngredientName, getIngredientUnit } from '@/lib/utils';
 
 export default function NewRecipe() {
   const router = useRouter();
@@ -71,16 +72,6 @@ export default function NewRecipe() {
           .watch('ingredients')
           .some(field => field.ingredientId === ingredient.id)
     ) || [];
-
-  const getIngredientUnit = (ingredientId: string) => {
-    const ingredient = data?.ingredients.find(ing => ing.id === ingredientId);
-    return ingredient?.unit || '';
-  };
-
-  const getIngredientName = (ingredientId: string) => {
-    const ingredient = data?.ingredients.find(ing => ing.id === ingredientId);
-    return ingredient?.name || '';
-  };
 
   return (
     <div className="container mx-auto">
@@ -162,7 +153,7 @@ export default function NewRecipe() {
                     Quantity
                     {selectedIngredientId && (
                       <span className="text-gray-500">
-                        ({getIngredientUnit(selectedIngredientId)})
+                        ({getIngredientUnit(selectedIngredientId, data)})
                       </span>
                     )}
                   </Label>
@@ -200,13 +191,13 @@ export default function NewRecipe() {
                   >
                     <div className="flex-1">
                       <span className="font-medium">
-                        {getIngredientName(field.ingredientId)}
+                        {getIngredientName(field.ingredientId, data)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-gray-600">
                         {form.watch(`ingredients.${index}.quantity`)}{' '}
-                        {getIngredientUnit(field.ingredientId)}
+                        {getIngredientUnit(field.ingredientId, data)}
                       </span>
                       <Button
                         type="button"

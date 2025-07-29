@@ -36,6 +36,7 @@ import {
   IngredientFormData,
   ingredientFormSchema,
 } from '@/types';
+import { getRecipesUsingIngredient, isIngredientUsed } from '@/lib/utils';
 
 export default function NewIngredient() {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -77,25 +78,9 @@ export default function NewIngredient() {
     }
   };
 
-  // Check if ingredient is used in any recipe
-  const isIngredientUsed = (ingredientId: string) => {
-    return data?.recipes.some((recipe: Recipe) =>
-      recipe.ingredients.some(ing => ing.ingredientId === ingredientId)
-    );
-  };
-
-  // Get recipes that use this ingredient
-  const getRecipesUsingIngredient = (ingredientId: string) => {
-    return (
-      data?.recipes.filter((recipe: Recipe) =>
-        recipe.ingredients.some(ing => ing.ingredientId === ingredientId)
-      ) || []
-    );
-  };
-
   const handleDelete = (ingredientId: string) => {
-    if (isIngredientUsed(ingredientId)) {
-      const recipes = getRecipesUsingIngredient(ingredientId);
+    if (isIngredientUsed(ingredientId, data)) {
+      const recipes = getRecipesUsingIngredient(ingredientId, data);
       const recipeNames = recipes.map((r: Recipe) => r.name).join(', ');
       alert(
         `Cannot delete this ingredient. It is being used by the following recipes: ${recipeNames}. Please delete those recipes first.`
