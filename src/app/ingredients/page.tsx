@@ -240,6 +240,13 @@ export default function NewIngredient() {
                 </TableCell>
               </TableRow>
             ))}
+            {data?.ingredients.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center py-8">
+                  No ingredients found.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
           {data?.ingredients && (
             <TableFooter>
@@ -251,12 +258,6 @@ export default function NewIngredient() {
             </TableFooter>
           )}
         </Table>
-
-        {data?.ingredients.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            No ingredients found. Add your first ingredient above.
-          </div>
-        )}
       </div>
     </div>
   );

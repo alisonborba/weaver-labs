@@ -72,6 +72,13 @@ export default function RecipeTable() {
                 </TableCell>
               </TableRow>
             ))}
+            {data?.recipes.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={3} className="text-center py-8">
+                  No recipes found.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
           {data?.recipes && (
             <TableFooter>
