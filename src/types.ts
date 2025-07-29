@@ -23,15 +23,6 @@ export type AppData = {
   recipes: Recipe[];
 };
 
-export type ApiResponse<T = unknown> = {
-  message?: string;
-  error?: string;
-  data?: T;
-  recipe?: Recipe;
-  ingredient?: Ingredient;
-  recipes?: Recipe[];
-};
-
 export const recipeFormSchema = z.object({
   name: z
     .string()
