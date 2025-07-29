@@ -13,7 +13,6 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableFooter,
   TableHead,
@@ -28,7 +27,7 @@ import { queryClient } from '@/app/Providers';
 import { useState } from 'react';
 import { categories, units } from '@/lib/constants';
 import { Header } from '@/components/Header';
-import { PlusIcon } from 'lucide-react';
+import { AppData, Recipe, Ingredient } from '@/types';
 
 const ingredientFormSchema = z.object({
   name: z.string().min(1, 'Ingredient name is required'),
@@ -48,7 +47,7 @@ export default function NewIngredient() {
   const [showAddForm, setShowAddForm] = useState(false);
 
   // Fetch data
-  const { data } = useQuery({
+  const { data } = useQuery<AppData>({
     queryKey: ['recipes'],
     queryFn: () => fetch('/api/data').then(res => res.json()),
   });
@@ -83,9 +82,9 @@ export default function NewIngredient() {
     },
     onMutate: async newIngredient => {
       await queryClient.cancelQueries({ queryKey: ['recipes'] });
-      const previousData = queryClient.getQueryData(['recipes']);
+      const previousData = queryClient.getQueryData<AppData>(['recipes']);
 
-      queryClient.setQueryData(['recipes'], (old: any) => {
+      queryClient.setQueryData<AppData>(['recipes'], old => {
         if (!old) return old;
         const ingredientId = `ing${Date.now()}`;
         return {
@@ -121,14 +120,14 @@ export default function NewIngredient() {
     },
     onMutate: async ingredientId => {
       await queryClient.cancelQueries({ queryKey: ['recipes'] });
-      const previousData = queryClient.getQueryData(['recipes']);
+      const previousData = queryClient.getQueryData<AppData>(['recipes']);
 
-      queryClient.setQueryData(['recipes'], (old: any) => {
+      queryClient.setQueryData<AppData>(['recipes'], old => {
         if (!old) return old;
         return {
           ...old,
           ingredients: old.ingredients.filter(
-            (ing: any) => ing.id !== ingredientId
+            (ing: Ingredient) => ing.id !== ingredientId
           ),
         };
       });
@@ -151,16 +150,16 @@ export default function NewIngredient() {
 
   // Check if ingredient is used in any recipe
   const isIngredientUsed = (ingredientId: string) => {
-    return data?.recipes.some((recipe: any) =>
-      recipe.ingredients.some((ing: any) => ing.ingredientId === ingredientId)
+    return data?.recipes.some((recipe: Recipe) =>
+      recipe.ingredients.some(ing => ing.ingredientId === ingredientId)
     );
   };
 
   // Get recipes that use this ingredient
   const getRecipesUsingIngredient = (ingredientId: string) => {
     return (
-      data?.recipes.filter((recipe: any) =>
-        recipe.ingredients.some((ing: any) => ing.ingredientId === ingredientId)
+      data?.recipes.filter((recipe: Recipe) =>
+        recipe.ingredients.some(ing => ing.ingredientId === ingredientId)
       ) || []
     );
   };
@@ -168,7 +167,7 @@ export default function NewIngredient() {
   const handleDelete = (ingredientId: string) => {
     if (isIngredientUsed(ingredientId)) {
       const recipes = getRecipesUsingIngredient(ingredientId);
-      const recipeNames = recipes.map((r: any) => r.name).join(', ');
+      const recipeNames = recipes.map((r: Recipe) => r.name).join(', ');
       alert(
         `Cannot delete this ingredient. It is being used by the following recipes: ${recipeNames}. Please delete those recipes first.`
       );
@@ -221,7 +220,7 @@ export default function NewIngredient() {
                   <Label htmlFor="unit">Unit</Label>
                   <Select
                     value={form.watch('unit')}
-                    onValueChange={value => form.setValue('unit', value as any)}
+                    onValueChange={value => form.setValue('unit', value)}
                   >
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select unit" />
@@ -245,9 +244,7 @@ export default function NewIngredient() {
                   <Label htmlFor="category">Category</Label>
                   <Select
                     value={form.watch('category')}
-                    onValueChange={value =>
-                      form.setValue('category', value as any)
-                    }
+                    onValueChange={value => form.setValue('category', value)}
                   >
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select category" />
@@ -290,7 +287,7 @@ export default function NewIngredient() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.ingredients.map((ingredient: any) => (
+            {data?.ingredients.map((ingredient: Ingredient) => (
               <TableRow key={ingredient.id}>
                 <TableCell className="font-medium">{ingredient.name}</TableCell>
                 <TableCell>{ingredient.unit}</TableCell>

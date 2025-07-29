@@ -1,19 +1,24 @@
 import { NextResponse } from 'next/server';
 import { readData, writeData } from '@/lib/server-utils';
+import { Recipe, IngredientWithRecipe } from '@/types';
 
 export async function GET() {
   try {
     const data = await readData();
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to load data' }, { status: 500 });
+    return NextResponse.json({ error: JSON.stringify(error) }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { id, name, ingredients } = body;
+    const {
+      id,
+      name,
+      ingredients,
+    }: { id: string; name: string; ingredients: IngredientWithRecipe[] } = body;
 
     // Validate required fields
     if (!name || !ingredients || !Array.isArray(ingredients) || !id) {
@@ -36,7 +41,7 @@ export async function POST(request: Request) {
     const data = await readData();
 
     // Create new recipe
-    const newRecipe = {
+    const newRecipe: Recipe = {
       id,
       name,
       ingredients,
@@ -53,10 +58,7 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to add recipe' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: JSON.stringify(error) }, { status: 500 });
   }
 }
 
@@ -76,7 +78,7 @@ export async function DELETE(request: Request) {
 
     // Find recipe index
     const recipeIndex = data.recipes.findIndex(
-      (recipe: any) => recipe.id === recipeId
+      (recipe: Recipe) => recipe.id === recipeId
     );
 
     if (recipeIndex === -1) {
@@ -94,9 +96,6 @@ export async function DELETE(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to delete recipe' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: JSON.stringify(error) }, { status: 500 });
   }
 }

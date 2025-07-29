@@ -14,5 +14,18 @@ export type Recipe = {
   id: string;
   name: string;
   ingredients: IngredientWithRecipe[];
-  steps: string[];
+};
+
+export type AppData = {
+  ingredients: Ingredient[];
+  recipes: Recipe[];
+};
+
+export type ApiResponse<T = unknown> = {
+  message?: string;
+  error?: string;
+  data?: T;
+  recipe?: Recipe;
+  ingredient?: Ingredient;
+  recipes?: Recipe[];
 };

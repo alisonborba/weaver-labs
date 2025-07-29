@@ -13,33 +13,31 @@ import {
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { queryClient } from '@/app/Providers';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
-
-const ingredientSchema = z.object({
-  ingredientId: z.string().min(1, 'Ingredient is required'),
-  quantity: z.number().min(0.1, 'Quantity must be greater than 0'),
-});
+import { AppData, Ingredient } from '@/types';
 
 const recipeFormSchema = z.object({
-  name: z.string().min(1, 'Recipe name must be at least 1 character'),
-  ingredients: z
-    .array(ingredientSchema)
-    .min(1, 'At least one ingredient is required'),
+  name: z.string().min(1, 'Recipe name is required'),
+  ingredients: z.array(
+    z.object({
+      ingredientId: z.string().min(1, 'Ingredient is required'),
+      quantity: z.number().min(0.1, 'Quantity must be greater than 0'),
+    })
+  ),
 });
 
 type RecipeFormData = z.infer<typeof recipeFormSchema>;
 
 export default function NewRecipe() {
   const router = useRouter();
-  const [selectedIngredientId, setSelectedIngredientId] = useState<string>('');
-  const [selectedQuantity, setSelectedQuantity] = useState<string>('');
+  const [selectedIngredientId, setSelectedIngredientId] = useState('');
+  const [selectedQuantity, setSelectedQuantity] = useState('');
 
-  // Fetch ingredients data
-  const { data } = useQuery({
+  const { data } = useQuery<AppData>({
     queryKey: ['recipes'],
     queryFn: () => fetch('/api/data').then(res => res.json()),
   });
@@ -52,23 +50,17 @@ export default function NewRecipe() {
     },
   });
 
-  const {
-    fields: ingredients,
-    append,
-    remove,
-  } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'ingredients',
   });
 
-  // Mutation for adding recipe
   const mutation = useMutation({
     mutationFn: async (recipeData: RecipeFormData) => {
       const recipeId = `rec${Date.now()}`;
       const recipeToSend = {
         id: recipeId,
-        name: recipeData.name,
-        ingredients: recipeData.ingredients,
+        ...recipeData,
       };
 
       const response = await fetch('/api/data', {
@@ -86,15 +78,21 @@ export default function NewRecipe() {
       await queryClient.cancelQueries({ queryKey: ['recipes'] });
 
       // Snapshot the previous value
-      const previousData = queryClient.getQueryData(['recipes']);
+      const previousData = queryClient.getQueryData<AppData>(['recipes']);
 
       // Optimistically update to the new value
-      queryClient.setQueryData(['recipes'], (old: any) => {
+      queryClient.setQueryData<AppData>(['recipes'], old => {
         if (!old) return old;
         const recipeId = `rec${Date.now()}`;
         return {
           ...old,
-          recipes: [...old.recipes, { id: recipeId, ...newRecipe }],
+          recipes: [
+            ...old.recipes,
+            {
+              id: recipeId,
+              ...newRecipe,
+            },
+          ],
         };
       });
 
@@ -134,20 +132,22 @@ export default function NewRecipe() {
   // Get available ingredients (not already selected)
   const availableIngredients =
     data?.ingredients.filter(
-      (ingredient: any) =>
-        !ingredients.some(field => field.ingredientId === ingredient.id)
+      (ingredient: Ingredient) =>
+        !form
+          .watch('ingredients')
+          .some(field => field.ingredientId === ingredient.id)
     ) || [];
 
   const getIngredientUnit = (ingredientId: string) => {
     const ingredient = data?.ingredients.find(
-      (ing: any) => ing.id === ingredientId
+      (ing: Ingredient) => ing.id === ingredientId
     );
     return ingredient?.unit || '';
   };
 
   const getIngredientName = (ingredientId: string) => {
     const ingredient = data?.ingredients.find(
-      (ing: any) => ing.id === ingredientId
+      (ing: Ingredient) => ing.id === ingredientId
     );
     return ingredient?.name || '';
   };
@@ -209,7 +209,7 @@ export default function NewRecipe() {
                       />
                     </SelectTrigger>
                     <SelectContent>
-                      {availableIngredients.map((ingredient: any) => (
+                      {availableIngredients.map((ingredient: Ingredient) => (
                         <SelectItem key={ingredient.id} value={ingredient.id}>
                           {ingredient.name} ({ingredient.unit})
                         </SelectItem>
@@ -253,7 +253,7 @@ export default function NewRecipe() {
 
               {/* Selected Ingredients List */}
               <div className="space-y-2 mb-6">
-                {ingredients.map((field, index) => (
+                {fields.map((field, index) => (
                   <div
                     key={field.id}
                     className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg"

@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { readData, writeData } from '@/lib/server-utils';
+import { Ingredient, Recipe } from '@/types';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { id, name, unit, category } = body;
+    const { id, name, unit, category }: Ingredient = body;
 
     // Validate required fields
     if (!name || !unit || !category || !id) {
@@ -17,7 +18,7 @@ export async function POST(request: Request) {
     const data = await readData();
 
     // Create new ingredient
-    const newIngredient = {
+    const newIngredient: Ingredient = {
       id,
       name,
       unit,
@@ -35,10 +36,7 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to add ingredient' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: JSON.stringify(error) }, { status: 500 });
   }
 }
 
@@ -57,20 +55,20 @@ export async function DELETE(request: Request) {
     const data = await readData();
 
     // Check if ingredient is used in any recipe
-    const isUsedInRecipes = data.recipes.some((recipe: any) =>
-      recipe.ingredients.some((ing: any) => ing.ingredientId === ingredientId)
+    const isUsedInRecipes = data.recipes.some((recipe: Recipe) =>
+      recipe.ingredients.some(ing => ing.ingredientId === ingredientId)
     );
 
     if (isUsedInRecipes) {
-      const recipesUsingIngredient = data.recipes.filter((recipe: any) =>
-        recipe.ingredients.some((ing: any) => ing.ingredientId === ingredientId)
+      const recipesUsingIngredient = data.recipes.filter((recipe: Recipe) =>
+        recipe.ingredients.some(ing => ing.ingredientId === ingredientId)
       );
 
       return NextResponse.json(
         {
           error: 'Cannot delete ingredient',
           message: `Ingredient is used in ${recipesUsingIngredient.length} recipe(s). Please delete those recipes first.`,
-          recipes: recipesUsingIngredient.map((r: any) => ({
+          recipes: recipesUsingIngredient.map((r: Recipe) => ({
             id: r.id,
             name: r.name,
           })),
@@ -81,7 +79,7 @@ export async function DELETE(request: Request) {
 
     // Find ingredient index
     const ingredientIndex = data.ingredients.findIndex(
-      (ingredient: any) => ingredient.id === ingredientId
+      (ingredient: Ingredient) => ingredient.id === ingredientId
     );
 
     if (ingredientIndex === -1) {
@@ -105,9 +103,6 @@ export async function DELETE(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to delete ingredient' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: JSON.stringify(error) }, { status: 500 });
   }
 }
