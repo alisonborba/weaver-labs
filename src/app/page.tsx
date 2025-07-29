@@ -57,7 +57,7 @@ export default function Home() {
                   text-white hover:bg-white border-lg rounded-3xl"
                   asChild
                 >
-                  <Link href="/new-recipe">Create New Recipe</Link>
+                  <Link href="/ingredients">Manage Ingredients</Link>
                 </Button>
 
                 <Button
@@ -67,7 +67,7 @@ export default function Home() {
                   text-white hover:bg-white border-lg rounded-3xl"
                   asChild
                 >
-                  <Link href="/ingredients">Manage Ingredients</Link>
+                  <Link href="/new-recipe">Create New Recipe</Link>
                 </Button>
               </div>
             </div>
