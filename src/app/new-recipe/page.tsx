@@ -115,6 +115,11 @@ export default function NewRecipe() {
                   {form.formState.errors.name.message}
                 </p>
               )}
+              {form.formState.errors.ingredients && (
+                <p className="text-red-500 text-sm mt-2">
+                  {form.formState.errors.ingredients.message}
+                </p>
+              )}
             </div>
 
             {/* Ingredients Section - Full width on mobile, side by side on desktop */}
@@ -218,12 +223,6 @@ export default function NewRecipe() {
               </div>
             </div>
           </div>
-
-          {form.formState.errors.ingredients && (
-            <p className="text-red-500 text-sm">
-              {form.formState.errors.ingredients.message}
-            </p>
-          )}
         </form>
       </div>
     </div>
