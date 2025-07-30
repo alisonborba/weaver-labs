@@ -23,7 +23,7 @@ After the core features were in place, I moved to **testing**:
 - **Unit Tests:** Implemented with **Jest** for key functions and components.
 - **End-to-End Tests:** Built with **Playwright**, testing flows such as adding, deleting, and verifying empty states. I also adapted the UI for mobile responsiveness since tables are notoriously difficult to handle on smaller screens.
 
-Finally, I deployed the project to **Vercel**.
+Finally, I deployed the project to **Vercel** and set up a **Redis** database to manage data in the Vercel environment, since Vercel does not support persistent file-based JSON storage.
 
 ---
 
@@ -49,7 +49,7 @@ Playwright’s mobile test runs revealed some UI inconsistencies, especially wit
 
 ### 4. File-based Data Storage
 
-Vercel doesn't support server-side file writing for JSON storage. Implemented client-side data management with React Query, easily replaceable with a database
+Vercel doesn’t allow writing to JSON files on the server. To work around this, I used Redis for data persistence and managed state on the client with React Query.
 
 ## ✨ Features
 
@@ -146,11 +146,19 @@ npm run format       # Format code with Prettier
 npm run format:check # Check code formatting
 ```
 
+### Redis and ENV variables
+
+By default, the application reads and writes data to a local `data.json` file.  
+However, if Redis environment variables (`REDIS_URL` and `REDIS_TOKEN`) are present, it will automatically switch to use Redis as the data store.
+
+> Redis was added primarily to enable deployment on Vercel (which doesn't support file writing), but the app works seamlessly with local JSON storage for development and testing.
+
 ## 🔮 Improvements
 
+- **Optimised Data Transfer**: Currently, the entire data object is sent to the backend with each mutation (add/delete). While acceptable for a front-end focused prototype, this approach is inefficient for production. Future improvements should include sending only the modified data (e.g. a single recipe or ingredient) to reduce payload size and improve performance, especially when integrating a real database.
+- **Improved Test Coverage**: Increase both unit and end-to-end test coverage. Some Playwright tests currently fail on certain devices, and only critical scenarios were covered as this is a front-end-focused prototype. Expanding coverage will improve reliability across different viewports and interactions.
 - **Card-based Layout**: Replace tables with modern card components
 - **Database Integration**: Replace JSON storage with PostgreSQL or MongoDB
-- **User Authentication**: Add user accounts and recipe sharing
 - **Advanced Search**: Implement recipe and ingredient search functionality
 - **Recipe Categories**: Add categorization and filtering
 - **Image Upload**: Allow users to upload recipe images
