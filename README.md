@@ -157,6 +157,7 @@ However, if Redis environment variables (`REDIS_URL` and `REDIS_TOKEN`) are pres
 
 - **Optimised Data Transfer**: Currently, the entire data object is sent to the backend with each mutation (add/delete). While acceptable for a front-end focused prototype, this approach is inefficient for production. Future improvements should include sending only the modified data (e.g. a single recipe or ingredient) to reduce payload size and improve performance, especially when integrating a real database.
 - **Improved Test Coverage**: Increase both unit and end-to-end test coverage. Some Playwright tests currently fail on certain devices, and only critical scenarios were covered as this is a front-end-focused prototype. Expanding coverage will improve reliability across different viewports and interactions.
+- **Ingredients Info**: Add different types of ingredient units and categories.
 - **Card-based Layout**: Replace tables with modern card components
 - **Database Integration**: Replace JSON storage with PostgreSQL or MongoDB
 - **Advanced Search**: Implement recipe and ingredient search functionality
