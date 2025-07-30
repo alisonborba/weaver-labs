@@ -23,7 +23,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto text-center">
             <div className="space-y-8">
               {/* Main Heading */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
                 Orchestrate <span className="text-gray-300">Your Dishes</span>
                 <br />
                 Enhance <span className="text-gray-300">Your Cooking</span>
