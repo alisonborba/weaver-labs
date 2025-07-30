@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
 const items = [
@@ -83,9 +84,17 @@ export function AppSidebar() {
         <SidebarContent className="bg-[#0a1728] text-white relative">
           <SidebarGroup>
             <SidebarGroupLabel className="font-bold text-xl my-4 flex items-center text-white">
-              Weaver Plate
+              <Link href="/" className="w-full">
+                <Image
+                  src="/logo.png"
+                  alt="Weaver Plate"
+                  className="w-1/2 mx-auto"
+                  width={100}
+                  height={100}
+                />
+              </Link>
             </SidebarGroupLabel>
-            <SidebarGroupContent>
+            <SidebarGroupContent className="mt-5">
               <SidebarMenu>
                 {items.map(item => (
                   <SidebarMenuItem key={item.title}>
