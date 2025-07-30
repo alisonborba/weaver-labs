@@ -61,7 +61,7 @@ export const useCreateRecipe = () => {
       }
       toast.error('ERROR: Recipe has not been created');
     },
-    onSuccess: () => toast.success('Recipe has been created'),
+    onSuccess: () => toast.success('Recipe created successfully'),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['recipes'] });
     },
@@ -96,7 +96,7 @@ export const useDeleteRecipe = () => {
       }
       toast.error('ERROR: Recipe has not been deleted');
     },
-    onSuccess: () => toast.success('Recipe has been deleted'),
+    onSuccess: () => toast.success('Recipe deleted successfully'),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['recipes'] });
     },
@@ -150,7 +150,7 @@ export const useCreateIngredient = () => {
       }
       toast.error('ERROR: Ingredient has not been created');
     },
-    onSuccess: () => toast.success('Ingredient has been created'),
+    onSuccess: () => toast.success('Ingredient created successfully'),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['recipes'] });
     },
@@ -187,7 +187,7 @@ export const useDeleteIngredient = () => {
       }
       toast.error('ERROR: Ingredient has not been deleted');
     },
-    onSuccess: () => toast.success('Ingredient has been deleted'),
+    onSuccess: () => toast.success('Ingredient deleted successfully'),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['recipes'] });
     },
