@@ -5,7 +5,7 @@ import {
   ingredientList,
   isIngredientUsed,
 } from '@/lib/utils';
-import { AppData } from '@/types';
+import { AppData, Ingredient, IngredientWithRecipe } from '@/types';
 
 // Mock data for testing
 const mockAppData: AppData = {
@@ -80,7 +80,7 @@ describe('Business Logic Functions', () => {
     });
 
     it('should return all ingredients when none are selected', () => {
-      const selectedIngredients: any[] = [];
+      const selectedIngredients: IngredientWithRecipe[] = [];
 
       const availableIngredients = mockAppData.ingredients.filter(
         ingredient =>
