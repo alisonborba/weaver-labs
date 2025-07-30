@@ -5,7 +5,7 @@ import {
   ingredientList,
   isIngredientUsed,
 } from '@/lib/utils';
-import { AppData, Ingredient, IngredientWithRecipe } from '@/types';
+import { AppData, IngredientWithRecipe } from '@/types';
 
 // Mock data for testing
 const mockAppData: AppData = {
