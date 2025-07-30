@@ -32,7 +32,7 @@ export default function RecipeTable() {
           </Button>
         }
       />
-      <div className="m-4 px-2 border rounded ">
+      <div className="mx-4 my-5 border rounded ">
         <Table>
           <TableHeader>
             <TableRow>

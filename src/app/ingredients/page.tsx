@@ -108,14 +108,14 @@ export default function NewIngredient() {
         }
       />
 
-      <div className="m-4 px-2 border rounded">
+      <div className="mx-4 my-5 border rounded">
         {/* Add Ingredient Form */}
         {showAddForm && (
-          <div className="my-4 p-2 border rounded-lg bg-white">
+          <div className="m-4 p-2 border rounded">
             <h2 className="text-lg font-semibold mb-4">Add New Ingredient</h2>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex flex-col md:flex-row gap-4 items-end">
-                <div className="flex-1 w-1/4">
+                <div className="flex-1 md:w-1/4 w-full">
                   <Label htmlFor="name">Name</Label>
                   <Input
                     id="name"
@@ -130,7 +130,7 @@ export default function NewIngredient() {
                   )}
                 </div>
 
-                <div className="flex-1 w-1/4">
+                <div className="flex-1 md:w-1/4 w-full">
                   <Label htmlFor="unit">Unit</Label>
                   <Select
                     value={form.watch('unit')}
@@ -157,7 +157,7 @@ export default function NewIngredient() {
                   )}
                 </div>
 
-                <div className="flex-1 w-1/4">
+                <div className="flex-1 md:w-1/4 w-full">
                   <Label htmlFor="category">Category</Label>
                   <Select
                     value={form.watch('category')}
@@ -184,13 +184,15 @@ export default function NewIngredient() {
                   )}
                 </div>
 
-                <Button
-                  type="submit"
-                  disabled={addMutation.isPending}
-                  className="md:w-auto"
-                >
-                  {addMutation.isPending ? 'Saving...' : 'Save'}
-                </Button>
+                <div className="md:w-1/5 w-full flex justify-end">
+                  <Button
+                    type="submit"
+                    disabled={addMutation.isPending}
+                    className="w-full"
+                  >
+                    {addMutation.isPending ? 'Saving...' : 'Save'}
+                  </Button>
+                </div>
               </div>
             </form>
           </div>

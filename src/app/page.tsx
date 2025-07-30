@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="min-h-screen w-full bg-black">
+    <div className="min-h-screen w-full bg-black md:mt-0 -mt-16">
       {/* Hero Section */}
       <div
         className="relative min-h-screen flex items-center justify-center"
