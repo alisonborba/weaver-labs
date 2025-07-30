@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { queryClient } from '@/app/Providers';
 import { AppData, Recipe, Ingredient } from '@/types';
+import { toast } from 'sonner';
 
 // Get data
 export const useGetRecipes = () => {
@@ -58,7 +59,9 @@ export const useCreateRecipe = () => {
       if (context?.previousData) {
         queryClient.setQueryData(['recipes'], context.previousData);
       }
+      toast.error('ERROR: Recipe has not been created');
     },
+    onSuccess: () => toast.success('Recipe has been created'),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['recipes'] });
     },
@@ -91,14 +94,15 @@ export const useDeleteRecipe = () => {
       if (context?.previousData) {
         queryClient.setQueryData(['recipes'], context.previousData);
       }
+      toast.error('ERROR: Recipe has not been deleted');
     },
+    onSuccess: () => toast.success('Recipe has been deleted'),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['recipes'] });
     },
   });
 };
 
-// Ingredient mutations
 export const useCreateIngredient = () => {
   return useMutation({
     mutationFn: async (ingredientData: {
@@ -144,7 +148,9 @@ export const useCreateIngredient = () => {
       if (context?.previousData) {
         queryClient.setQueryData(['recipes'], context.previousData);
       }
+      toast.error('ERROR: Ingredient has not been created');
     },
+    onSuccess: () => toast.success('Ingredient has been created'),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['recipes'] });
     },
@@ -179,7 +185,9 @@ export const useDeleteIngredient = () => {
       if (context?.previousData) {
         queryClient.setQueryData(['recipes'], context.previousData);
       }
+      toast.error('ERROR: Ingredient has not been deleted');
     },
+    onSuccess: () => toast.success('Ingredient has been deleted'),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['recipes'] });
     },
