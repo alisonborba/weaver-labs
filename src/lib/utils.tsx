@@ -1,38 +1,31 @@
-import { AppData, IngredientWithRecipe, Recipe } from '@/types';
-import { Ingredient } from '@/types';
+import { AppData, IngredientWithRecipe, Recipe } from '@/lib/types';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { useQueryClient } from '@tanstack/react-query';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// Hook para acessar dados do cache
-export const useAppData = () => {
-  const queryClient = useQueryClient();
-  const data = queryClient.getQueryData<AppData>(['recipes']);
-  return data;
-};
-
-// Funções que usam o cache internamente
+// Get ingredient unit
 export const getIngredientUnit = (ingredientId: string, data?: AppData) => {
   const ingredient = data?.ingredients.find(ing => ing.id === ingredientId);
   return ingredient?.unit || '';
 };
 
+// Get ingredient name
 export const getIngredientName = (ingredientId: string, data?: AppData) => {
   const ingredient = data?.ingredients.find(ing => ing.id === ingredientId);
   return ingredient?.name || '';
 };
 
+// Get ingredient list
 export const ingredientList = (
   ingredients: IngredientWithRecipe[],
   data: AppData
 ) => {
   return ingredients.map(ingredient => {
-    const ingredientData: Ingredient | undefined = data?.ingredients.find(
-      (ing: Ingredient) => ing.id === ingredient.ingredientId
+    const ingredientData = data?.ingredients.find(
+      ing => ing.id === ingredient.ingredientId
     );
     if (!ingredientData) return null;
     return (

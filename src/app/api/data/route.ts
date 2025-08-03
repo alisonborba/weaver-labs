@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { readData, writeData } from '@/lib/server-utils';
-import { Recipe, IngredientWithRecipe } from '@/types';
+import { Recipe, IngredientWithRecipe } from '@/lib/types';
 
 export async function GET() {
   try {

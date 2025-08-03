@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Skeleton } from '@/components/ui/skeleton';
-import { RecipeFormData, recipeFormSchema } from '@/types';
+import { RecipeFormData, recipeFormSchema } from '@/lib/types';
 import { getIngredientName, getIngredientUnit } from '@/lib/utils';
 
 export default function NewRecipe() {

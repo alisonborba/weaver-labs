@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { AppData } from '@/types';
+import { AppData } from '@/lib/types';
 import { Redis } from '@upstash/redis';
 
 // Data file path

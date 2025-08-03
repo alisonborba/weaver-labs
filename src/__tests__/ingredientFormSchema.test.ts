@@ -1,4 +1,4 @@
-import { ingredientFormSchema } from '@/types';
+import { ingredientFormSchema } from '@/lib/types';
 
 describe('ingredientFormSchema', () => {
   describe('valid data', () => {

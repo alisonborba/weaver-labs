@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { readData, writeData } from '@/lib/server-utils';
-import { Ingredient, Recipe } from '@/types';
+import { Ingredient, Recipe } from '@/lib/types';
 
 export async function POST(request: Request) {
   try {

@@ -35,7 +35,7 @@ import {
   Ingredient,
   IngredientFormData,
   ingredientFormSchema,
-} from '@/types';
+} from '@/lib/types';
 import { getRecipesUsingIngredient, isIngredientUsed } from '@/lib/utils';
 import { useDeleteConfirmation } from '@/hooks/use-delete-confirmation';
 

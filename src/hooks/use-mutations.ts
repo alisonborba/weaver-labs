@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { queryClient } from '@/app/Providers';
-import { AppData, Recipe, Ingredient } from '@/types';
+import { AppData, Recipe, Ingredient } from '@/lib/types';
 import { toast } from 'sonner';
 
 // Get data

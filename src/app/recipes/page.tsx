@@ -11,7 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Recipe } from '@/types';
+import { Recipe } from '@/lib/types';
 import { useDeleteRecipe, useGetRecipes } from '@/hooks/use-mutations';
 import { Header } from '@/components/Header';
 import { ingredientList } from '@/lib/utils';
