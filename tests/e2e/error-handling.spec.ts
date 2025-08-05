@@ -133,8 +133,7 @@ test.describe('Error Handling Tests', () => {
       timeout: 10000,
     });
 
-    // Wait for page to load
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(2000);
 
     // Now try to delete the ingredient
     await page.goto('/ingredients');
